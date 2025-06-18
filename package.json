@@ -1,6 +1,6 @@
 {
   "name": "react-static-prerender",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple CLI tool to prerender React SPA routes into static HTML files.",
   "main": "index.js",
   "type": "module",
