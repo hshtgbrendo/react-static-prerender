@@ -15,41 +15,84 @@ async function loadConfig() {
     console.log(`
       Please create a prerender.config.js file with your configuration:
       
+      Static routes:
       module.exports = {
         routes: ["/", "/about", "/contact"],
         outDir: "static-pages", 
         serveDir: "build",
         flatOutput: false, // true for about.html, false for about/index.html
       };
+      
+      Dynamic routes:
+      export default async function() {
+        const blogPosts = await getBlogPosts(); // Your data fetching logic
+        const blogRoutes = blogPosts.map(post => \`/blog/\${post.slug}\`);
+        
+        return {
+          routes: ["/", "/blog", ...blogRoutes],
+          outDir: "static-pages",
+          serveDir: "build",
+        };
+      }
     `);
     process.exit(1);
   }
 
   try {
-    const configModule = await import(configPath);
-    return typeof configModule.default === "function"
+
+    const configUrl = `file://${configPath}`;
+    const configModule = await import(configUrl);
+    
+    const config = typeof configModule.default === "function"
         ? await configModule.default()
         : configModule.default;
+        
+    if (!config) {
+      throw new Error('Config file must export a configuration object or function');
+    }
+    
+    return config;
   } catch (error) {
     if (error.code === 'ERR_REQUIRE_ESM' || error.message.includes('Unexpected token')) {
       console.error(`
         ❌ Configuration file error: ${error.message}
         
-        Your prerender.config.js uses ES module syntax (export default) but your project doesn't have "type": "module" in package.json.
+        Your prerender.config.js uses ES module syntax but your project setup doesn't support it.
         
-        Please either:
+        Solutions:
         1. Add "type": "module" to your package.json, OR
-        2. Use CommonJS syntax in prerender.config.js:
+        2. Use CommonJS syntax:
         
         module.exports = {
           routes: ["/", "/about", "/contact"],
           outDir: "static-pages",
           serveDir: "build",
         };
+        
+        OR for dynamic routes:
+        
+        module.exports = async function() {
+          const fs = require('fs/promises');
+          // Your dynamic route logic here
+          return { routes: [...], outDir: "static-pages", serveDir: "build" };
+        };
       `);
       process.exit(1);
     }
-    throw error;
+    
+    if (error.message.includes('Cannot resolve module')) {
+      console.error(`
+        ❌ Module resolution error in config file: ${error.message}
+        
+        Make sure all imported modules in your config file are installed:
+        - If using 'fs/promises', 'path', etc. - these are built-in Node.js modules
+        - If using external packages, run: npm install <package-name>
+      `);
+      process.exit(1);
+    }
+    
+    console.error(`❌ Error loading configuration: ${error.message}`);
+    process.exit(1);
   }
 }
 
