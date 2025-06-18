@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "bin": {
-    "react-static-prerender": "./bin/cli.js"
+    "react-static-prerender": "bin/cli.js"
   },
   "keywords": [
     "react",
