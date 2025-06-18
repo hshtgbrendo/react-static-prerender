@@ -1,4 +1,4 @@
-# react-static-prerenderer
+# react-static-prerender
 
 A lightweight CLI tool that converts your React SPA into static HTML files, each acting as a standalone entry point.
 
@@ -15,7 +15,7 @@ A lightweight CLI tool that converts your React SPA into static HTML files, each
 
 Install as a development dependency:
 
-    npm install --save-dev react-static-prerenderer
+    npm install --save-dev react-static-prerender
 
 ## Usage
 
