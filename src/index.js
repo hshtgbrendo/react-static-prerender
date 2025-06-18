@@ -84,11 +84,10 @@ export async function prerender(config) {
   let browser = null;
 
   try {
-    // KEY CHANGE: detached: true creates a new process group
     serveProcess = spawn("npx", ["serve", "-s", serveDir, "-l", port.toString()], {
       stdio: ["pipe", "pipe", "pipe"],
       shell: true,
-      detached: true,  // 🔑 This is the key!
+      detached: true,
     });
 
     serveProcess.stdout.on("data", data => {

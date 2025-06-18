@@ -1,3 +1,5 @@
+[🔗 GitHub Repository](https://github.com/jankojjs/react-static-prerender)
+
 [![npm version](https://img.shields.io/npm/v/react-static-prerender.svg)](https://www.npmjs.com/package/react-static-prerender)
 [![MIT license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 # react-static-prerender
@@ -36,8 +38,20 @@ Install as a development dependency:
       outDir: "static-pages",
       serveDir: "build",
       flatOutput: false, // Optional: true for about.html, false for about/index.html
+      buildCommand: "npm run build" // Default, can be omitted
     };
     ```
+
+   **For Vite/Yarn/PNPM projects:**
+   ```js
+   export default {
+     routes: ["/", "/about", "/contact"],
+     outDir: "static-pages", 
+     serveDir: "dist", // Vite uses 'dist'
+     buildCommand: "vite/yarn/pnpm build"
+   };
+   ```
+
 
    If your project uses CommonJS (no `"type": "module"`):
     ```js
@@ -262,6 +276,7 @@ npm run prerender
 | `routes` | `string[]` | `[]` | Array of routes to prerender (e.g., `["/", "/about"]`) |
 | `outDir` | `string` | `"static-pages"` | Output directory for generated static files |
 | `serveDir` | `string` | `"build"` | Directory containing your built React app |
+| `buildCommand` | `string` | `"npm run build"` | Command to build your app when using `--with-build` |
 | `flatOutput` | `boolean` | `false` | Output structure: `true` = `about.html`, `false` = `about/index.html` |
 
 ## CLI Options

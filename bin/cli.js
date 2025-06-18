@@ -146,15 +146,19 @@ async function main() {
     }
 
     if (shouldBuild) {
-      console.log("🏗️ Running npm run build...");
+      const buildCommand = config.buildCommand || "npm run build";
+      console.log(`🏗️ Running ${buildCommand}...`);
+
+      const [command, ...args] = buildCommand.split(' ');
+
       await new Promise((resolve, reject) => {
-        const build = spawn("npm", ["run", "build"], {
+        const build = spawn(command, args, {
           stdio: "inherit",
           shell: true
         });
         build.on("exit", (code) => {
           if (code === 0) resolve();
-          else reject(new Error("❌ Build failed"));
+          else reject(new Error(`❌ Build failed with exit code ${code}`));
         });
       });
     } else {
