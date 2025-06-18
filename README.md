@@ -21,20 +21,45 @@ Install as a development dependency:
 
 1. Create a `prerender.config.js` file in your project root to specify routes, input build directory, and output directory.
 
+    **Example `prerender.config.js`**
+
+  ```js
+      export default async function () {
+        return {
+          routes: ["/", "/about", "/contact"],
+          outDir: "static-pages",
+          serveDir: "build",
+        };
+      }
+  ```
+
 2. Make sure your React app is built and ready to be prerendered or run the command with --with-build flag.
+
 
 3. Run the prerender command to generate static HTML pages.
 
-## Example `prerender.config.js`
+    ```
+    npx react-static-prerender
+    ```
 
-```js
-export default async function () {
-  return {
-    routes: ["/", "/about", "/contact"],
-    outDir: "static-pages",
-    serveDir: "build",
-  };
+    If you want to automatically build before prerendering:
+
+    ```
+    npx react-static-prerender --with-build
+    ```
+
+**(Optional)** Add an npm script to simplify future runs:
+
+```json
+"scripts": {
+  "prerender": "react-static-prerender --with-build"
 }
+```
+
+Then run with:
+
+```
+npm run prerender
 ```
 
 ## CLI Options
