@@ -1,3 +1,4 @@
+
 import puppeteer from "puppeteer";
 import fs from "fs/promises";
 import path from "path";
@@ -34,6 +35,27 @@ async function waitForServer(port, maxAttempts = 30) {
   throw new Error(`Server on port ${port} did not start within ${maxAttempts} seconds`);
 }
 
+async function killProcess(process) {
+  return new Promise((resolve) => {
+    if (!process || process.killed) {
+      resolve();
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      process.kill('SIGKILL');
+      resolve();
+    }, 3000);
+
+    process.on('exit', () => {
+      clearTimeout(timeout);
+      resolve();
+    });
+
+    process.kill('SIGTERM');
+  });
+}
+
 export async function prerender(config) {
   const {
     routes = [],
@@ -43,7 +65,6 @@ export async function prerender(config) {
   } = config;
 
   const outDirPath = path.resolve(process.cwd(), outDir);
-
   const port = await findAvailablePort();
 
   let serveProcess = null;
@@ -53,6 +74,7 @@ export async function prerender(config) {
     serveProcess = spawn("npx", ["serve", "-s", serveDir, "-l", port.toString()], {
       stdio: ["pipe", "pipe", "pipe"],
       shell: true,
+      detached: false,
     });
 
     serveProcess.stdout.on("data", data => {
@@ -84,12 +106,10 @@ export async function prerender(config) {
         const safeName = route.replace(/^\//, "").replace(/\//g, "-") || "root";
 
         if (flatOutput) {
-          // Flat structure: /about -> about.html
           const fileName = `${safeName}.html`;
           await fs.writeFile(path.join(outDirPath, fileName), html);
           console.log(`✅ Saved static page: ${fileName}`);
         } else {
-          // Nested structure: /about -> about/index.html
           const routeDir = path.join(outDirPath, safeName);
           await fs.mkdir(routeDir, { recursive: true });
           await fs.writeFile(path.join(routeDir, "index.html"), html);
@@ -106,7 +126,7 @@ export async function prerender(config) {
       await browser.close();
     }
     if (serveProcess) {
-      serveProcess.kill();
+      await killProcess(serveProcess);
     }
   }
 }
