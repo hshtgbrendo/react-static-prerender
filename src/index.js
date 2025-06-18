@@ -1,4 +1,3 @@
-
 import puppeteer from "puppeteer";
 import fs from "fs/promises";
 import path from "path";
@@ -35,24 +34,38 @@ async function waitForServer(port, maxAttempts = 30) {
   throw new Error(`Server on port ${port} did not start within ${maxAttempts} seconds`);
 }
 
-async function killProcess(process) {
+async function killProcessGroup(childProcess) {
   return new Promise((resolve) => {
-    if (!process || process.killed) {
+    if (!childProcess || childProcess.killed) {
       resolve();
       return;
     }
 
     const timeout = setTimeout(() => {
-      process.kill('SIGKILL');
+      try {
+        process.kill(-childProcess.pid, 'SIGKILL');
+      } catch (e) {
+        // Process might already be dead
+      }
       resolve();
-    }, 3000);
+    }, 2000);
 
-    process.on('exit', () => {
+    childProcess.on('exit', () => {
       clearTimeout(timeout);
       resolve();
     });
 
-    process.kill('SIGTERM');
+    childProcess.on('error', () => {
+      clearTimeout(timeout);
+      resolve();
+    });
+
+    try {
+      process.kill(-childProcess.pid, 'SIGTERM');
+    } catch (e) {
+      clearTimeout(timeout);
+      resolve();
+    }
   });
 }
 
@@ -71,10 +84,11 @@ export async function prerender(config) {
   let browser = null;
 
   try {
+    // KEY CHANGE: detached: true creates a new process group
     serveProcess = spawn("npx", ["serve", "-s", serveDir, "-l", port.toString()], {
       stdio: ["pipe", "pipe", "pipe"],
       shell: true,
-      detached: false,
+      detached: true,  // 🔑 This is the key!
     });
 
     serveProcess.stdout.on("data", data => {
@@ -87,7 +101,10 @@ export async function prerender(config) {
     await waitForServer(port);
     console.log(`🚀 Server started on port ${port}`);
 
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-dev-shm-usage']
+    });
     const page = await browser.newPage();
 
     await fs.mkdir(outDirPath, { recursive: true });
@@ -126,7 +143,7 @@ export async function prerender(config) {
       await browser.close();
     }
     if (serveProcess) {
-      await killProcess(serveProcess);
+      await killProcessGroup(serveProcess);
     }
   }
 }
