@@ -1,0 +1,30 @@
+{
+  "name": "react-static-prerender",
+  "version": "1.0.0",
+  "description": "A simple CLI tool to prerender React SPA routes into static HTML files.",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "react-static-prerender": "./bin/cli.js"
+  },
+  "keywords": [
+    "react",
+    "static",
+    "prerender",
+    "spa",
+    "html",
+    "seo",
+    "cli"
+  ],
+  "author": {
+    "name": "Janko Stanic",
+    "email": "jjsolutions034@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.1.0",
+    "fs-extra": "^11.3.0",
+    "puppeteer": "^24.10.1",
+    "serve": "^14.2.4"
+  }
+}
