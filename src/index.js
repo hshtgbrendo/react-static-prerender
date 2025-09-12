@@ -76,6 +76,7 @@ export async function prerender(config) {
     serveDir = "build",
     flatOutput = false,
     puppeteerExecutablePath = '',
+    waitOnSelector = '',
   } = config;
 
   const outDirPath = path.resolve(process.cwd(), outDir);
@@ -109,35 +110,44 @@ export async function prerender(config) {
         puppeteerOptions['executablePath'] = puppeteerExecutablePath
     }
 
+    console.log("launch puppeteer with executable path " + puppeteerExecutablePath)
+
     browser = await puppeteer.launch(puppeteerOptions);
     const page = await browser.newPage();
 
     await fs.mkdir(outDirPath, { recursive: true });
 
     for (const route of routes) {
-      const url = `http://localhost:${port}${route}`;
-      console.log(`📄 Processing route: ${route}`);
+        const url = `http://localhost:${port}${route}`;
+        console.log(`📄 Processing route: ${route}`);
 
-      await page.goto(url, { waitUntil: "networkidle0" });
-      const html = await page.content();
-
-      if (route === "/") {
-        await fs.writeFile(path.join(outDirPath, "index.html"), html);
-        console.log(`✅ Saved static page: index.html`);
-      } else {
-        const safeName = route.replace(/^\//, "").replace(/\//g, "-") || "root";
-
-        if (flatOutput) {
-          const fileName = `${safeName}.html`;
-          await fs.writeFile(path.join(outDirPath, fileName), html);
-          console.log(`✅ Saved static page: ${fileName}`);
+        if (waitOnSelector) {
+            await page.goto(url, { waitUntil: 'domcontentloaded' })
+            console.log(`📄 Wait on selector: ${waitOnSelector}`)
+            await page.waitForSelector(waitOnSelector)
         } else {
-          const routeDir = path.join(outDirPath, safeName);
-          await fs.mkdir(routeDir, { recursive: true });
-          await fs.writeFile(path.join(routeDir, "index.html"), html);
-          console.log(`✅ Saved static page: ${path.join(safeName, "index.html")}`);
+            await page.goto(url, { waitUntil: "networkidle0" });
         }
-      }
+
+        const html = await page.content();
+
+        if (route === "/") {
+            await fs.writeFile(path.join(outDirPath, "index.html"), html);
+            console.log(`✅ Saved static page: index.html`);
+        } else {
+            const safeName = route.replace(/^\//, "").replace(/\//g, "-") || "root";
+
+            if (flatOutput) {
+                const fileName = `${safeName}.html`;
+                await fs.writeFile(path.join(outDirPath, fileName), html);
+                console.log(`✅ Saved static page: ${fileName}`);
+            } else {
+                const routeDir = path.join(outDirPath, safeName);
+                await fs.mkdir(routeDir, { recursive: true });
+                await fs.writeFile(path.join(routeDir, "index.html"), html);
+                console.log(`✅ Saved static page: ${path.join(safeName, "index.html")}`);
+            }
+        }
     }
 
   } catch (error) {
