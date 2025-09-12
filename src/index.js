@@ -74,7 +74,8 @@ export async function prerender(config) {
     routes = [],
     outDir = "static-pages",
     serveDir = "build",
-    flatOutput = false
+    flatOutput = false,
+    puppeteerExecutablePath = '',
   } = config;
 
   const outDirPath = path.resolve(process.cwd(), outDir);
@@ -99,11 +100,16 @@ export async function prerender(config) {
 
     await waitForServer(port);
     console.log(`🚀 Server started on port ${port}`);
+      
+    let puppeteerOptions = {
+        headless: true,
+        args: ['--no-sandbox', '--disable-dev-shm-usage']
+    }
+    if (puppeteerExecutablePath) {
+        puppeteerOptions['executablePath'] = puppeteerExecutablePath
+    }
 
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-dev-shm-usage']
-    });
+    browser = await puppeteer.launch(puppeteerOptions);
     const page = await browser.newPage();
 
     await fs.mkdir(outDirPath, { recursive: true });
