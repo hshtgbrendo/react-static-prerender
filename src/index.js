@@ -125,7 +125,7 @@ export async function prerender(config) {
 
         await page.goto(url, { waitUntil: 'domcontentloaded' })
         console.log(`📄 Wait on selector: ${waitOnSelector}`)
-        await page.waitForSelector(waitOnSelector)
+        await page.waitForSelector('[data-page-loaded]="true"')
         // if (waitOnSelector) {
             
         // } else {
