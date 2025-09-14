@@ -117,6 +117,8 @@ export async function prerender(config) {
 
     await fs.mkdir(outDirPath, { recursive: true });
 
+    console.log("config: ", config)
+
     for (const route of routes) {
         const url = `http://localhost:${port}${route}`;
         console.log(`📄 Processing route: ${route}`);
@@ -126,6 +128,7 @@ export async function prerender(config) {
             console.log(`📄 Wait on selector: ${waitOnSelector}`)
             await page.waitForSelector(waitOnSelector)
         } else {
+            console.log(`📄 Wait until networkidle0`)
             await page.goto(url, { waitUntil: "networkidle0" });
         }
 
