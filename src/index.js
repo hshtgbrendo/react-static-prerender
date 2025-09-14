@@ -124,9 +124,13 @@ export async function prerender(config) {
         console.log(`📄 Processing route: ${route}`);
 
         if (waitOnSelector) {
-            await page.goto(url, { waitUntil: 'domcontentloaded' })
+            // await page.goto(url, { waitUntil: 'domcontentloaded' })
+            await page.goto(url, { waitUntil: 'networkidle2' })
             console.log(`📄 Wait on selector: ${waitOnSelector}`)
-            await page.waitForSelector(waitOnSelector)
+            await page.waitForSelector(waitOnSelector, {visible: true})
+            // await page.waitForFunction(() =>
+            //     document.querySelector('[data-page-loaded="true"]') !== null
+            // );
         } else {
             console.log(`📄 Wait until networkidle0`)
             await page.goto(url, { waitUntil: "networkidle0" });
