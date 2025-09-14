@@ -123,14 +123,15 @@ export async function prerender(config) {
         const url = `http://localhost:${port}${route}`;
         console.log(`📄 Processing route: ${route}`);
 
-        if (waitOnSelector) {
-            await page.goto(url, { waitUntil: 'domcontentloaded' })
-            console.log(`📄 Wait on selector: ${waitOnSelector}`)
-            await page.waitForSelector(waitOnSelector)
-        } else {
-            console.log(`📄 Wait until networkidle0`)
-            await page.goto(url, { waitUntil: "networkidle0" });
-        }
+        await page.goto(url, { waitUntil: 'domcontentloaded' })
+        console.log(`📄 Wait on selector: ${waitOnSelector}`)
+        await page.waitForSelector(waitOnSelector)
+        // if (waitOnSelector) {
+            
+        // } else {
+        //     console.log(`📄 Wait until networkidle0`)
+        //     await page.goto(url, { waitUntil: "networkidle0" });
+        // }
 
         const html = await page.content();
 
