@@ -124,7 +124,7 @@ export async function prerender(config) {
         console.log(`📄 Processing route: ${route}`);
 
         if (waitOnSelector) {
-            // await page.goto(url, { waitUntil: 'domcontentloaded' })
+            await page.goto(url, { waitUntil: 'domcontentloaded' })
             // await page.goto(url, { waitUntil: 'networkidle0' })
             console.log(`📄 Wait on selector: "#pageLoaded"`)
             await page.waitForSelector("#pageLoaded", {visible: true, timeout: 30000})
