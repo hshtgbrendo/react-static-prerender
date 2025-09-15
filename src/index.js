@@ -127,7 +127,7 @@ export async function prerender(config) {
             // await page.goto(url, { waitUntil: 'domcontentloaded' })
             await page.goto(url, { waitUntil: 'networkidle0' })
             console.log(`📄 Wait on selector: "#pageLoaded"`)
-            await page.waitForSelector("#pageLoaded", {visible: true, timeout: 30000})
+            await page.waitForSelector("#pageLoaded", {visible: true, timeout: 120000})
             // await page.waitForFunction(() =>
             //     document.querySelector('[data-page-loaded="true"]') !== null
             // );
