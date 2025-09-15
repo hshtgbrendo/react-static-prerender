@@ -103,7 +103,7 @@ export async function prerender(config) {
     console.log(`🚀 Server started on port ${port}`);
       
     let puppeteerOptions = {
-        headless: true,
+        headless: false,
         args: ['--no-sandbox', '--disable-dev-shm-usage']
     }
     if (puppeteerExecutablePath) {
