@@ -5,21 +5,25 @@ import { spawn } from "child_process";
 import { createServer } from "http";
 
 async function findAvailablePort(startPort = 5050) {
-  for (let port = startPort; port < startPort + 100; port++) {
-    try {
-      await new Promise((resolve, reject) => {
-        const server = createServer();
-        server.listen(port, () => {
-          server.close(() => resolve(port));
-        });
-        server.on('error', reject);
-      });
-      return port;
-    } catch (error) {
-      continue;
+    if (process.env.PORT) {
+        return parseInt(process.env.PORT, 10)
     }
-  }
-  throw new Error('No available port found');
+
+    for (let port = startPort; port < startPort + 100; port++) {
+        try {
+        await new Promise((resolve, reject) => {
+            const server = createServer();
+            server.listen(port, () => {
+                server.close(() => resolve(port));
+            });
+            server.on('error', reject);
+        });
+        return port;
+        } catch (error) {
+            continue;
+        }
+    }
+    throw new Error('No available port found');
 }
 
 async function waitForServer(port, maxAttempts = 30) {
