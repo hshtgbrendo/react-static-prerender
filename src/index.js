@@ -7,7 +7,7 @@ import { createServer } from "http";
 import { Renderer } from "./renderer"
 import { ConfigManager } from "./config"
 
-async function findAvailablePort(startPort = 1000) {
+async function findAvailablePort(startPort = 10000) {
     console.log(`📄 env port: ${process.env.PORT}`)
     if (process.env.PORT) {
         let port = parseInt(process.env.PORT, 10)
@@ -25,7 +25,7 @@ async function findAvailablePort(startPort = 1000) {
             throw new Error(error);
         }
     } else {
-        console.log("📄 check startPort 1000")
+        console.log("📄 check startPort 10000")
         for (let port = startPort; port < startPort + 100; port++) {
             try {
                 await new Promise((resolve, reject) => {
