@@ -8,9 +8,10 @@ import { Renderer } from "./renderer"
 import { ConfigManager } from "./config"
 
 async function findAvailablePort(startPort = 5050) {
+    console.log(`📄 env port: ${process.env.PORT}`)
     if (process.env.PORT) {
         let port = parseInt(process.env.PORT, 10)
-        console.log("use existing port " + port)
+        console.log("📄 use existing port " + port)
         try {
             await new Promise((resolve, reject) => {
                 const server = createServer();
@@ -21,25 +22,26 @@ async function findAvailablePort(startPort = 5050) {
             });
             return port;
         } catch (error) {
-            throw new Error('No available port found');
+            throw new Error(error);
         }
-    }
-
-    for (let port = startPort; port < startPort + 100; port++) {
-        try {
-            await new Promise((resolve, reject) => {
-                const server = createServer();
-                server.listen(port, () => {
-                    server.close(() => resolve(port));
+    } else {
+        console.log("📄 check startPort 5050")
+        for (let port = startPort; port < startPort + 100; port++) {
+            try {
+                await new Promise((resolve, reject) => {
+                    const server = createServer();
+                    server.listen(port, () => {
+                        server.close(() => resolve(port));
+                    });
+                    server.on('error', reject);
                 });
-                server.on('error', reject);
-            });
-            return port;
-        } catch (error) {
-            continue;
+                return port;
+            } catch (error) {
+                continue;
+            }
         }
+        throw new Error('No available port found');
     }
-    throw new Error('No available port found');
 }
 
 async function waitForServer(port, maxAttempts = 30) {
