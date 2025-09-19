@@ -73,7 +73,7 @@
 //      * the requester to read the file system via Chrome.
 //      */
 //     restricted(href) {
-//         const parsedUrl = url.parse(href)
+//         const parsedUrl = url.parse(href) 
 //         const protocol = parsedUrl.protocol || ""
 
 //         if (!protocol.match(/^https?/)) {
