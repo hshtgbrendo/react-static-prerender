@@ -19,12 +19,24 @@ export class ConfigManager {
 
     static async getConfiguration() {
         // Load config.json if it exists.
-        if (fse.pathExists(CONFIG_PATH)) {
-            ConfigManager.config = Object.assign(
-                ConfigManager.config,
-                await fse.readJson(CONFIG_PATH)
-            )
+        // if (fse.pathExists(CONFIG_PATH)) {
+        //     ConfigManager.config = Object.assign(
+        //         ConfigManager.config,
+        //         await fse.readJson(CONFIG_PATH)
+        //     )
+        // }
+        // return ConfigManager.config
+        try {
+            if (await fse.pathExists(CONFIG_PATH)) {
+                const fileConfig = await fse.readJson(CONFIG_PATH);
+                ConfigManager.config = {
+                    ...ConfigManager.config,
+                    ...fileConfig
+                };
+            }
+        } catch (err) {
+            console.error("Failed to load config.json:", err);
         }
-        return ConfigManager.config
+        return ConfigManager.config;
     }
 }
