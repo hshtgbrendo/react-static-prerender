@@ -4,8 +4,8 @@ import path from "path";
 import { spawn } from "child_process";
 import { createServer } from "http";
 
-import { Renderer } from "./renderer"
-import { ConfigManager } from "./config"
+import { Renderer } from "./renderer.js"
+import { ConfigManager } from "./config.js"
 
 async function findAvailablePort(startPort = 10000) {
     console.log(`📄 env port: ${process.env.PORT}`)
