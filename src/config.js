@@ -19,7 +19,7 @@ export class ConfigManager {
 
     static async getConfiguration() {
         // Load config.json if it exists.
-        if (fse.pathExistsSync(CONFIG_PATH)) {
+        if (fse.pathExists(CONFIG_PATH)) {
             ConfigManager.config = Object.assign(
                 ConfigManager.config,
                 await fse.readJson(CONFIG_PATH)
