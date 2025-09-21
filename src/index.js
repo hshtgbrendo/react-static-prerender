@@ -138,7 +138,7 @@ export async function prerender(config) {
 
         browser = await puppeteer.launch(puppeteerOptions);
         var renderer = new Renderer(browser, rendertronConfig)
-        const page = await browser.newPage();
+        // const page = await browser.newPage();
 
         await fs.mkdir(outDirPath, { recursive: true });
 
@@ -165,6 +165,7 @@ export async function prerender(config) {
             const mobileVersion = false
             // const html = await page.content();
             const html = await renderer.serialize(url, mobileVersion)
+            console.log(`📄 serialized page: ${html.content}`)
 
             if (route === "/") {
                 await fs.writeFile(path.join(outDirPath, "index.html"), html);
