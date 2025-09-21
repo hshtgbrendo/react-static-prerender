@@ -7,7 +7,7 @@ import { createServer } from "http";
 import { Renderer } from "./renderer.js"
 import { ConfigManager } from "./config.js"
 
-async function findAvailablePort(startPort = 10000) {
+async function findAvailablePort(startPort = 5050) {
     console.log(`📄 env port: ${process.env.PORT}`)
     if (process.env.PORT) {
         let port = parseInt(process.env.PORT, 10)
@@ -104,7 +104,7 @@ export async function prerender(config) {
     var rendertronConfig = await ConfigManager.getConfiguration()
 
     const outDirPath = path.resolve(process.cwd(), outDir);
-    const port = await findAvailablePort();
+    const port = process.env.PORT
 
     let serveProcess = null;
     let browser = null;
