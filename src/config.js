@@ -1,5 +1,5 @@
 "use strict"
-import * as fse from "fs-extra"
+import fsExtra from "fs-extra"
 import * as path from "path"
 import { fileURLToPath } from "url";
 
@@ -27,8 +27,8 @@ export class ConfigManager {
         // }
         // return ConfigManager.config
         try {
-            if (await fse.pathExists(CONFIG_PATH)) {
-                const fileConfig = await fse.readJson(CONFIG_PATH);
+            if (await fsExtra.pathExists(CONFIG_PATH)) {
+                const fileConfig = await fsExtra.readJson(CONFIG_PATH);
                 ConfigManager.config = {
                     ...ConfigManager.config,
                     ...fileConfig
