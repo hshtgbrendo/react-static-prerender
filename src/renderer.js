@@ -73,7 +73,7 @@ export class Renderer {
         // times out, which results in puppeteer throwing an error. This allows us
         // to return a partial response for what was able to be rendered in that
         // time frame.
-        page.addListener("response", r => {
+        page.on("response", r => {
             if (!response) {
                 response = r
             }
