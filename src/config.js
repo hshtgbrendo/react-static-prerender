@@ -11,7 +11,7 @@ const CONFIG_PATH = path.resolve(__dirname, "../config.json")
 export class ConfigManager {
     static config = {
         datastoreCache: false,
-        timeout: 10000,
+        timeout: 120000,
         port: "3000",
         width: 1000,
         height: 1000
