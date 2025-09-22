@@ -22,7 +22,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "puppeteer": "^24.10.1",
+    "@sparticuz/chromium": "^133.0.0",
+    "puppeteer-core": "^24.22.0",
     "serve": "^14.2.4"
   },
   "engines": {

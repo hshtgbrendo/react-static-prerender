@@ -1,8 +1,9 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import fs from "fs/promises";
 import path from "path";
 import { spawn } from "child_process";
 import { createServer } from "http";
+import chromium from "@sparticuz/chromium";
 
 import { Renderer } from "./renderer.js"
 import { ConfigManager } from "./config.js"
@@ -128,19 +129,20 @@ export async function prerender(config) {
         console.log(`📄 puppeteer helper executable path: ${puppeteer.executablePath()}`)
         
         let puppeteerOptions = {
-            executablePath: puppeteer.executablePath(),
+            executablePath: await chromium.executablePath(),
             headless: true,
             // args: ['--no-sandbox', '--disable-dev-shm-usage', "--remote-debugging-pipe"]
-            args: [
-                "--no-sandbox",
-                "--disable-setuid-sandbox",
-                "--disable-gpu",
-                "--disable-dev-shm-usage",
-                "--disable-software-rasterizer",
-                "--single-process",
-                "--no-zygote",
-                "--remote-debugging-pipe",
-            ],
+            // args: [
+            //     "--no-sandbox",
+            //     "--disable-setuid-sandbox",
+            //     "--disable-gpu",
+            //     "--disable-dev-shm-usage",
+            //     "--disable-software-rasterizer",
+            //     "--single-process",
+            //     "--no-zygote",
+            //     "--remote-debugging-pipe",
+            // ],
+            args: chromium.args
         }
         // if (puppeteerExecutablePath) {
         //     puppeteerOptions['executablePath'] = puppeteerExecutablePath
