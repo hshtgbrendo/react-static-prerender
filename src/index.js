@@ -128,6 +128,7 @@ export async function prerender(config) {
         
         let puppeteerOptions = {
             headless: true,
+            executablePath: puppeteer.executablePath(),
             // args: ['--no-sandbox', '--disable-dev-shm-usage', "--remote-debugging-pipe"]
             args: [
                 "--no-sandbox",
