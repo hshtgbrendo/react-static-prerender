@@ -13,29 +13,30 @@ async function findAvailablePort(startPort = 5050) {
     if (process.env.PORT) {
         let port = parseInt(process.env.PORT, 10)
         console.log("📄 use existing port " + port)
-        try {
-            await new Promise((resolve, reject) => {
-                const server = createServer();
-                server.listen(port, () => {
-                    server.close(() => resolve(port));
-                });
-                server.on('error', reject);
-            });
-            return port;
-        } catch (error) {
-            throw new Error(error);
-        }
+        return port
+        // try {
+        //     await new Promise((resolve, reject) => {
+        //         const server = createServer();
+        //         server.listen(port, () => {
+        //             server.close(() => resolve(port));
+        //         });
+        //         server.on('error', reject);
+        //     });
+        //     return port;
+        // } catch (error) {
+        //     throw new Error(error);
+        // }
     } else {
         console.log("📄 check startPort 10000")
         for (let port = startPort; port < startPort + 100; port++) {
             try {
-                await new Promise((resolve, reject) => {
-                    const server = createServer();
-                    server.listen(port, () => {
-                        server.close(() => resolve(port));
-                    });
-                    server.on('error', reject);
-                });
+                // await new Promise((resolve, reject) => {
+                //     const server = createServer();
+                //     server.listen(port, () => {
+                //         server.close(() => resolve(port));
+                //     });
+                //     server.on('error', reject);
+                // });
                 return port;
             } catch (error) {
                 continue;
@@ -105,7 +106,7 @@ export async function prerender(config) {
     var rendertronConfig = await ConfigManager.getConfiguration()
 
     const outDirPath = path.resolve(process.cwd(), outDir);
-    const port = process.env.PORT
+    const port = await findAvailablePort()
 
     let serveProcess = null;
     let browser = null;
