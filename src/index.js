@@ -125,8 +125,10 @@ export async function prerender(config) {
 
         await waitForServer(port);
         console.log(`🚀 Server started on port ${port}`);
+        console.log(`📄 puppeteer helper executable path: ${puppeteer.executablePath()}`)
         
         let puppeteerOptions = {
+            executablePath: puppeteer.executablePath(),
             headless: true,
             // args: ['--no-sandbox', '--disable-dev-shm-usage', "--remote-debugging-pipe"]
             args: [
@@ -140,11 +142,11 @@ export async function prerender(config) {
                 "--remote-debugging-pipe",
             ],
         }
-        if (puppeteerExecutablePath) {
-            puppeteerOptions['executablePath'] = puppeteerExecutablePath
-        }
+        // if (puppeteerExecutablePath) {
+        //     puppeteerOptions['executablePath'] = puppeteerExecutablePath
+        // }
 
-        console.log("launch puppeteer with executable path " + puppeteerExecutablePath)
+        console.log("📄 launch puppeteer with options: ", puppeteerExecutablePath)
 
         browser = await puppeteer.launch(puppeteerOptions);
         var renderer = new Renderer(browser, rendertronConfig)
