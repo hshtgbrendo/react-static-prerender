@@ -103,7 +103,14 @@ export async function prerender(config) {
         waitOnSelector = '',
     } = config;
 
-    var rendertronConfig = await ConfigManager.getConfiguration()
+    // var rendertronConfig = await ConfigManager.getConfiguration()
+    var rendertronConfig = {
+        datastoreCache: false,
+        timeout: 120000,
+        port: "3000",
+        width: 1000,
+        height: 1000
+    }
 
     const outDirPath = path.resolve(process.cwd(), outDir);
     const port = await findAvailablePort()
