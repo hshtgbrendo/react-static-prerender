@@ -125,12 +125,18 @@ export async function prerender(config) {
         });
 
         await waitForServer(port);
+        const chromiumExecutablePath = await chromium.executablePath() 
+
+        if (!chromiumExecutablePath) {
+            throw new Error("Chromium executablePath not found!");
+        }
         console.log(`🚀 Server started on port ${port}`);
-        console.log(`📄 puppeteer helper executable path: ${puppeteer.executablePath()}`)
+        console.log(`📄 chromium executable path: ${chromiumExecutablePath}`)
+        console.log(`📄 chromium args: ${chromium.args}`)
         
         let puppeteerOptions = {
-            executablePath: await chromium.executablePath(),
-            headless: true,
+            chromiumExecutablePath,
+            headless: chromium.headless,
             // args: ['--no-sandbox', '--disable-dev-shm-usage', "--remote-debugging-pipe"]
             // args: [
             //     "--no-sandbox",
@@ -142,7 +148,8 @@ export async function prerender(config) {
             //     "--no-zygote",
             //     "--remote-debugging-pipe",
             // ],
-            args: chromium.args
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
         }
         // if (puppeteerExecutablePath) {
         //     puppeteerOptions['executablePath'] = puppeteerExecutablePath
