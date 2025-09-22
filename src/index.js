@@ -27,7 +27,8 @@ async function findAvailablePort(startPort = 5050) {
         //     throw new Error(error);
         // }
     } else {
-        console.log("📄 check startPort 10000")
+        console.log(`📄 check startPort ${startPort}`)
+        return startPort
         for (let port = startPort; port < startPort + 100; port++) {
             try {
                 // await new Promise((resolve, reject) => {
@@ -143,7 +144,7 @@ export async function prerender(config) {
         console.log(`📄 chromium args: ${chromium.args}`)
         
         let puppeteerOptions = {
-            chromiumExecutablePath,
+            executablePath: chromiumExecutablePath,
             headless: chromium.headless,
             // args: ['--no-sandbox', '--disable-dev-shm-usage', "--remote-debugging-pipe"]
             // args: [
