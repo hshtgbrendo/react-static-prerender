@@ -157,7 +157,18 @@ export async function prerender(config) {
             //     "--no-zygote",
             //     "--remote-debugging-pipe",
             // ],
-            args: chromium.args,
+            args: [
+                ...chromium.args,
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--no-zygote",
+                "--single-process",
+                "--disable-extensions",
+                "--disable-software-rasterizer",
+                "--remote-debugging-port=0" // 🔑 prevents opening port 9222
+            ],
             defaultViewport: chromium.defaultViewport,
         }
         // if (puppeteerExecutablePath) {
