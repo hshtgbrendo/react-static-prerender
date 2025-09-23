@@ -158,7 +158,7 @@ export async function prerender(config) {
             //     "--remote-debugging-pipe",
             // ],
             args: [
-                ...chromium.args,
+                // ...chromium.args,
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
