@@ -1,9 +1,9 @@
-import puppeteer from "puppeteer"; //"puppeteer-core": "^24.22.0",
+import puppeteer from "puppeteer-core"; //"puppeteer-core": "^24.22.0",
 import fs from "fs/promises";
 import path from "path";
 import { spawn } from "child_process";
 import { createServer } from "http";
-// import chromium from "@sparticuz/chromium"; //"@sparticuz/chromium": "^133.0.0",
+import chromium from "@sparticuz/chromium"; //"@sparticuz/chromium": "^133.0.0",
 
 import { Renderer } from "./renderer.js"
 import { ConfigManager } from "./config.js"
@@ -134,18 +134,18 @@ export async function prerender(config) {
         });
 
         await waitForServer(port);
-        // const chromiumExecutablePath = await chromium.executablePath()
+        const chromiumExecutablePath = await chromium.executablePath()
 
-        // if (!chromiumExecutablePath) {
-        //     throw new Error("Chromium executablePath not found!");
-        // }
+        if (!chromiumExecutablePath) {
+            throw new Error("Chromium executablePath not found!");
+        }
         console.log(`🚀 Server started on port ${port}`);
-        // console.log(`📄 chromium executable path: ${chromiumExecutablePath}`)
+        console.log(`📄 chromium executable path: ${chromiumExecutablePath}`)
         // console.log(`📄 chromium args: ${chromium.args}`)
 
         let puppeteerOptions = {
             dumpio: true, // stream chromium logs
-            // executablePath: chromiumExecutablePath,
+            executablePath: chromiumExecutablePath,
             // executablePath: "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
             // headless: chromium.headless,
             headless: true,

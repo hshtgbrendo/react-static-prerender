@@ -22,11 +22,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "puppeteer": "^24.22.3",
+    "@sparticuz/chromium": "^133.0.0",
+    "puppeteer-core": "^24.22.3",
     "serve": "^14.2.4"
-  },
-  "scripts": {
-    "postinstall": "npx puppeteer browsers install chrome-headless-shell"
   },
   "engines": {
     "node": ">=18.0.0"
