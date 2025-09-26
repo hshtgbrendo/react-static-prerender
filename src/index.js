@@ -269,7 +269,7 @@ export async function prerender(config) {
             console.log(`📄 serialized page: ${html.content}`)
 
             if (route === "/") {
-                await fs.writeFile(path.join(outDirPath, "index.html"), html);
+                await fs.writeFile(path.join(outDirPath, "index.html"), html.content);
                 console.log(`✅ Saved static page: index.html`);
             } else {
                 const safeName = route.replace(/^\//, "").replace(/\//g, "-") || "root";
@@ -277,13 +277,13 @@ export async function prerender(config) {
 
                 if (flatOutput) {
                     const fileName = `${safeName}.html`;
-                    await fs.writeFile(path.join(outDirPath, fileName), html);
+                    await fs.writeFile(path.join(outDirPath, fileName), html.content);
                     console.log(`✅ Saved static page: ${fileName}`);
                 } else {
                     const routeDir = path.join(outDirPath, safeName);
                     await fs.mkdir(routeDir, { recursive: true });
                     await fs.writeFile(path.join(routeDir, "index.html"), html.content);
-                    console.log(`✅ Saved static page: ${path.join(safeName, "index.html")}`);
+                    console.log(`✅ Saved static page: ${path.join(routeDir, "index.html")}`);
                 }
             }
         }
