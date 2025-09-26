@@ -134,6 +134,13 @@ async function copyBuildAssets(serveDir, outDir) {
   }
 }
 
+async function markDone() {
+    const DONE_FILE = path.resolve(process.cwd(), "PRERENDER_DONE");
+
+    await fs.writeFile(DONE_FILE, "done", "utf8");
+    console.log("✅ Wrote completion marker:", DONE_FILE);
+}
+
 async function main() {
     try {
         const config = await loadConfig();
@@ -182,8 +189,9 @@ async function main() {
 
         await copyBuildAssets(config.serveDir || "build", config.outDir || "static-pages");
 
+        await markDone()
+        // process.env.PRERENDER_FINISHED = "true"
         console.log("🎉 Prerendering completed successfully!");
-        process.env.PRERENDER_FINISHED = "true"
     } catch (error) {
         console.error("❌ Process failed:", error.message);
         process.exit(1);
