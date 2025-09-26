@@ -273,6 +273,7 @@ export async function prerender(config) {
                 console.log(`✅ Saved static page: index.html`);
             } else {
                 const safeName = route.replace(/^\//, "").replace(/\//g, "-") || "root";
+                console.log("output safename:", safeName)
 
                 if (flatOutput) {
                     const fileName = `${safeName}.html`;
