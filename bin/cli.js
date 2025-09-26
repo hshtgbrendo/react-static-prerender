@@ -183,7 +183,7 @@ async function main() {
         await copyBuildAssets(config.serveDir || "build", config.outDir || "static-pages");
 
         console.log("🎉 Prerendering completed successfully!");
-
+        process.env.PRERENDER_FINISHED = "true"
     } catch (error) {
         console.error("❌ Process failed:", error.message);
         process.exit(1);
