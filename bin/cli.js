@@ -135,59 +135,59 @@ async function copyBuildAssets(serveDir, outDir) {
 }
 
 async function main() {
-  try {
-    const config = await loadConfig();
-    const buildDir = path.resolve(process.cwd(), config.serveDir || "build");
-    const shouldBuild = process.argv.includes("--with-build");
-    const isDebug = process.argv.includes("--debug");
-
-    if (isDebug) {
-      process.env.DEBUG = "1";
-    }
-
-    if (shouldBuild) {
-      const buildCommand = config.buildCommand || "npm run build";
-      console.log(`🏗️ Running ${buildCommand}...`);
-
-      const [command, ...args] = buildCommand.split(' ');
-
-      await new Promise((resolve, reject) => {
-        const build = spawn(command, args, {
-          stdio: "inherit",
-          shell: true
-        });
-        build.on("exit", (code) => {
-          if (code === 0) resolve();
-          else reject(new Error(`❌ Build failed with exit code ${code}`));
-        });
-      });
-    } else {
-      const hasIndex = await pathExists(path.join(buildDir, "index.html"));
-      if (!hasIndex) {
-        console.error(
-            "❌ Build folder not found. Run `npm run build` or use --with-build."
-        );
-        process.exit(1);
-      }
-    }
-
-    const outDirPath = path.resolve(process.cwd(), config.outDir || "static-pages");
     try {
-      await fs.rm(outDirPath, { recursive: true, force: true });
-      console.log(`🧹 Cleaned existing output directory: ${config.outDir || "static-pages"}`);
-    } catch (err) {
+        const config = await loadConfig();
+        const buildDir = path.resolve(process.cwd(), config.serveDir || "build");
+        const shouldBuild = process.argv.includes("--with-build");
+        const isDebug = process.argv.includes("--debug");
+
+        if (isDebug) {
+            process.env.DEBUG = "1";
+        }
+
+        if (shouldBuild) {
+            const buildCommand = config.buildCommand || "npm run build";
+            console.log(`🏗️ Running ${buildCommand}...`);
+
+            const [command, ...args] = buildCommand.split(' ');
+
+            await new Promise((resolve, reject) => {
+                const build = spawn(command, args, {
+                    stdio: "inherit",
+                    shell: true
+                });
+                build.on("exit", (code) => {
+                    if (code === 0) resolve();
+                    else reject(new Error(`❌ Build failed with exit code ${code}`));
+                });
+            });
+        } else {
+            const hasIndex = await pathExists(path.join(buildDir, "index.html"));
+            if (!hasIndex) {
+                console.error(
+                    "❌ Build folder not found. Run `npm run build` or use --with-build."
+                );
+                process.exit(1);
+            }
+        }
+
+        const outDirPath = path.resolve(process.cwd(), config.outDir || "static-pages");
+        try {
+            await fs.rm(outDirPath, { recursive: true, force: true });
+            console.log(`🧹 Cleaned existing output directory: ${config.outDir || "static-pages"}`);
+        } catch (err) {
+        }
+
+        await prerender(config);
+
+        await copyBuildAssets(config.serveDir || "build", config.outDir || "static-pages");
+
+        console.log("🎉 Prerendering completed successfully!");
+
+    } catch (error) {
+        console.error("❌ Process failed:", error.message);
+        process.exit(1);
     }
-
-    await prerender(config);
-
-    await copyBuildAssets(config.serveDir || "build", config.outDir || "static-pages");
-
-    console.log("🎉 Prerendering completed successfully!");
-
-  } catch (error) {
-    console.error("❌ Process failed:", error.message);
-    process.exit(1);
-  }
 }
 
 main();

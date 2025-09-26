@@ -50,23 +50,23 @@ export class Renderer {
             }
         }
 
+        console.log(`📄 create page`)
         const page = await this.browser.newPage()
 
         // Page may reload when setting isMobile
         // https://github.com/GoogleChrome/puppeteer/blob/v1.10.0/docs/api.md#pagesetviewportviewport
-        await page.setViewport({
-            width: this.config.width,
-            height: this.config.height,
-            isMobile
-        })
+        // await page.setViewport({
+        //     width: this.config.width,
+        //     height: this.config.height,
+        // })
 
         if (isMobile) {
             page.setUserAgent(MOBILE_USERAGENT)
         }
 
-        page.evaluateOnNewDocument("customElements.forcePolyfill = true")
-        page.evaluateOnNewDocument("ShadyDOM = {force: true}")
-        page.evaluateOnNewDocument("ShadyCSS = {shimcssproperties: true}")
+        // page.evaluateOnNewDocument("customElements.forcePolyfill = true")
+        // page.evaluateOnNewDocument("ShadyDOM = {force: true}")
+        // page.evaluateOnNewDocument("ShadyCSS = {shimcssproperties: true}")
 
         let response = null
         // Capture main frame response. This is used in the case that rendering
@@ -81,6 +81,7 @@ export class Renderer {
 
         try {
             // Navigate to page. Wait until there are no outstanding network requests.
+            console.log(`📄 navigate to ${requestUrl}`)
             response = await page.goto(requestUrl, {
                 timeout: this.config.timeout,
                 waitUntil: "networkidle0"
@@ -135,6 +136,7 @@ export class Renderer {
 
         // Serialize page.
         const result = await page.evaluate("document.firstElementChild.outerHTML")
+        console.log(`status code: ${statusCode}`)
 
         await page.close()
         return { status: statusCode, content: result }

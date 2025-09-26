@@ -1,9 +1,9 @@
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer"; //"puppeteer-core": "^24.22.0",
 import fs from "fs/promises";
 import path from "path";
 import { spawn } from "child_process";
 import { createServer } from "http";
-import chromium from "@sparticuz/chromium";
+// import chromium from "@sparticuz/chromium"; //"@sparticuz/chromium": "^133.0.0",
 
 import { Renderer } from "./renderer.js"
 import { ConfigManager } from "./config.js"
@@ -48,50 +48,50 @@ async function findAvailablePort(startPort = 5050) {
 }
 
 async function waitForServer(port, maxAttempts = 30) {
-  for (let i = 0; i < maxAttempts; i++) {
-    try {
-      const response = await fetch(`http://localhost:${port}`);
-      if (response.ok) return true;
-    } catch (error) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    for (let i = 0; i < maxAttempts; i++) {
+        try {
+            const response = await fetch(`http://localhost:${port}`);
+            if (response.ok) return true;
+        } catch (error) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
     }
-  }
-  throw new Error(`Server on port ${port} did not start within ${maxAttempts} seconds`);
+    throw new Error(`Server on port ${port} did not start within ${maxAttempts} seconds`);
 }
 
 async function killProcessGroup(childProcess) {
-  return new Promise((resolve) => {
-    if (!childProcess || childProcess.killed) {
-      resolve();
-      return;
-    }
+    return new Promise((resolve) => {
+        if (!childProcess || childProcess.killed) {
+            resolve();
+            return;
+        }
 
-    const timeout = setTimeout(() => {
-      try {
-        process.kill(-childProcess.pid, 'SIGKILL');
-      } catch (e) {
-        // Process might already be dead
-      }
-      resolve();
-    }, 2000);
+        const timeout = setTimeout(() => {
+            try {
+                process.kill(-childProcess.pid, 'SIGKILL');
+            } catch (e) {
+                // Process might already be dead
+            }
+            resolve();
+        }, 2000);
 
-    childProcess.on('exit', () => {
-      clearTimeout(timeout);
-      resolve();
+        childProcess.on('exit', () => {
+            clearTimeout(timeout);
+            resolve();
+        });
+
+        childProcess.on('error', () => {
+            clearTimeout(timeout);
+            resolve();
+        });
+
+        try {
+            process.kill(-childProcess.pid, 'SIGTERM');
+        } catch (e) {
+            clearTimeout(timeout);
+            resolve();
+        }
     });
-
-    childProcess.on('error', () => {
-      clearTimeout(timeout);
-      resolve();
-    });
-
-    try {
-      process.kill(-childProcess.pid, 'SIGTERM');
-    } catch (e) {
-      clearTimeout(timeout);
-      resolve();
-    }
-  });
 }
 
 export async function prerender(config) {
@@ -124,7 +124,7 @@ export async function prerender(config) {
             stdio: ["pipe", "pipe", "pipe"],
             shell: true,
             detached: true,
-            });
+        });
 
         serveProcess.stdout.on("data", data => {
             if (process.env.DEBUG) process.stdout.write(`[serve] ${data}`);
@@ -134,17 +134,19 @@ export async function prerender(config) {
         });
 
         await waitForServer(port);
-        const chromiumExecutablePath = await chromium.executablePath() 
+        // const chromiumExecutablePath = await chromium.executablePath()
 
-        if (!chromiumExecutablePath) {
-            throw new Error("Chromium executablePath not found!");
-        }
+        // if (!chromiumExecutablePath) {
+        //     throw new Error("Chromium executablePath not found!");
+        // }
         console.log(`🚀 Server started on port ${port}`);
-        console.log(`📄 chromium executable path: ${chromiumExecutablePath}`)
-        console.log(`📄 chromium args: ${chromium.args}`)
-        
+        // console.log(`📄 chromium executable path: ${chromiumExecutablePath}`)
+        // console.log(`📄 chromium args: ${chromium.args}`)
+
         let puppeteerOptions = {
-            executablePath: chromiumExecutablePath,
+            dumpio: true, // stream chromium logs
+            // executablePath: chromiumExecutablePath,
+            // executablePath: "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
             // headless: chromium.headless,
             headless: true,
             // args: ['--no-sandbox', '--disable-dev-shm-usage', "--remote-debugging-pipe"]
@@ -159,66 +161,84 @@ export async function prerender(config) {
             //     "--remote-debugging-pipe",
             // ],
             args: [
-                "--allow-pre-commit-input",
-                "--disable-background-networking",
-                "--disable-background-timer-throttling",
-                "--disable-backgrounding-occluded-windows",
-                "--disable-breakpad",
-                "--disable-client-side-phishing-detection",
-                "--disable-component-extensions-with-background-pages",
-                "--disable-component-update",
-                "--disable-default-apps",
-                "--disable-hang-monitor",
-                "--disable-ipc-flooding-protection",
-                "--disable-popup-blocking",
-                "--disable-prompt-on-repost",
-                "--disable-renderer-backgrounding",
-                "--disable-sync",
-                "--enable-automation",
-                "--enable-blink-features=IdleDetection",
-                "--export-tagged-pdf",
-                "--force-color-profile=srgb",
-                "--metrics-recording-only",
-                "--no-first-run",
-                "--password-store=basic",
-                "--use-mock-keychain",
-                "--disable-domain-reliability",
-                "--disable-print-preview",
-                "--disable-speech-api",
-                "--disk-cache-size=33554432",
-                "--mute-audio",
-                "--no-default-browser-check",
-                "--no-pings",
-                "--font-render-hinting=none",
-                "--disable-features=Translate,BackForwardCache,AcceptCHFrame,MediaRouter,OptimizationHints,AudioServiceOutOfProcess,IsolateOrigins,site-per-process",
-                "--enable-features=NetworkServiceInProcess2,SharedArrayBuffer",
-                "--hide-scrollbars",
-                "--window-size=1920,1080",
-                "--allow-running-insecure-content",
-                "--disable-site-isolation-trials",
-                "--disable-web-security",
-                "--headless='shell'",
-                
+                // ...chromium.args,
+                // "--allow-pre-commit-input",
+                // "--disable-background-networking",
+                // "--disable-background-timer-throttling",
+                // "--disable-backgrounding-occluded-windows",
+                // "--disable-breakpad",
+                // "--disable-client-side-phishing-detection",
+                // "--disable-component-extensions-with-background-pages",
+                // "--disable-component-update",
+                // "--disable-default-apps",
+                // "--disable-hang-monitor",
+                // "--disable-ipc-flooding-protection",
+                // "--disable-popup-blocking",
+                // "--disable-prompt-on-repost",
+                // "--disable-renderer-backgrounding",
+                // "--disable-sync",
+                // "--enable-automation",
+                // "--enable-blink-features=IdleDetection",
+                // "--export-tagged-pdf",
+                // "--force-color-profile=srgb",
+                // "--metrics-recording-only",
+                // "--no-first-run",
+                // "--password-store=basic",
+                // "--use-mock-keychain",
+                // "--disable-domain-reliability",
+                // "--disable-print-preview",
+                // "--disable-speech-api",
+                // "--disk-cache-size=33554432",
+                // "--mute-audio",
+                // "--no-default-browser-check",
+                // "--no-pings",
+                // "--font-render-hinting=none",
+                // "--disable-features=Translate,BackForwardCache,AcceptCHFrame,MediaRouter,OptimizationHints,AudioServiceOutOfProcess,IsolateOrigins,site-per-process",
+                // "--enable-features=NetworkServiceInProcess2,SharedArrayBuffer",
+                // "--hide-scrollbars",
+                // "--window-size=1920,1080",
+                // "--allow-running-insecure-content",
+                // "--disable-site-isolation-trials",
+                // "--disable-web-security",
+                // "--headless='shell'",
+
+                // "--disable-features=CanvasOopRasterization,SwapChainForDCOMPOSITION",
+
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
                 "--no-zygote",
                 "--single-process",
                 "--disable-extensions",
-                "--disable-software-rasterizer",
-                "--remote-debugging-port=0" // 🔑 prevents opening port 9222
+                // "--remote-debugging-port=0", // 🔑 prevents opening port 9222
+
+                "--disable-gpu",
+                // "--disable-software-rasterizer",
+                // "--disable-dev-shm-usage",
+
+                "--disable-features=VizDisplayCompositor",
+                "--disable-accelerated-2d-canvas",
+
+                "--disable-webgl",
+                "--disable-webgl2",
+                "--use-gl=swiftshader", // fallback pure software renderer,
+
+                "--disable-features=UseDBusInGpuProcess", // 👈 key line
+                "--disable-features=UseDBusInSandbox",   // 👈 sometimes also needed
+                "--disable-dbus"                         // 👈 blanket disable
             ],
-            defaultViewport: chromium.defaultViewport,
+            // defaultViewport: chromium.defaultViewport,
+            protocolTimeout: 60000,
         }
         // if (puppeteerExecutablePath) {
         //     puppeteerOptions['executablePath'] = puppeteerExecutablePath
         // }
 
-        console.log("📄 launch puppeteer with options: ", puppeteerExecutablePath)
+        console.log("📄 launch puppeteer with options: ", puppeteerOptions)
 
         browser = await puppeteer.launch(puppeteerOptions);
+        console.log("📄 created browser")
         var renderer = new Renderer(browser, rendertronConfig)
+        console.log("📄 created renderer")
         // const page = await browser.newPage();
 
         await fs.mkdir(outDirPath, { recursive: true });
@@ -273,9 +293,13 @@ export async function prerender(config) {
     } finally {
         if (browser) {
             await browser.close();
+            console.log("closed browser")
         }
         if (serveProcess) {
             await killProcessGroup(serveProcess);
+            console.log("killed process group")
         }
+
+        return true
     }
 }
