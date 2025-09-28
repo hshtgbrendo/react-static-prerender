@@ -134,6 +134,14 @@ export class Renderer {
             `${parsedUrl.protocol}//${parsedUrl.host}`
         )
 
+        if (this.config.tag) {
+            await page.evaluate(() => {
+                const div = document.createElement("div");
+                div.textContent = "prerendered";
+                document.body.insertBefore(div, document.body.firstChild);
+            });
+        }
+
         // Serialize page.
         const result = await page.evaluate("document.firstElementChild.outerHTML")
         console.log(`status code: ${statusCode}`)

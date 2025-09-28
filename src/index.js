@@ -102,6 +102,7 @@ export async function prerender(config) {
         flatOutput = false,
         puppeteerExecutablePath = '',
         waitOnSelector = '',
+        tag = false,
     } = config;
 
     // var rendertronConfig = await ConfigManager.getConfiguration()
@@ -110,7 +111,8 @@ export async function prerender(config) {
         timeout: 120000,
         port: "3000",
         width: 1000,
-        height: 1000
+        height: 1000,
+        tag: tag
     }
 
     const outDirPath = path.resolve(process.cwd(), outDir);
