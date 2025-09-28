@@ -103,6 +103,7 @@ export async function prerender(config) {
         puppeteerExecutablePath = '',
         waitOnSelector = '',
         tag = false,
+        storage = {},
     } = config;
 
     // var rendertronConfig = await ConfigManager.getConfiguration()
@@ -242,6 +243,32 @@ export async function prerender(config) {
         var renderer = new Renderer(browser, rendertronConfig)
         console.log("📄 created renderer")
         // const page = await browser.newPage();
+
+        const newStorage = storage
+
+        if (newStorage) {
+            const page = await browser.newPage()
+            await page.goto(`http://localhost:${port}`)
+            await page.evaluate((storage) => {
+                for (const key in storage) {
+                    localStorage.setItem(key, storage[key]);
+                }
+            }, newStorage);
+
+            var keySet = true
+            for (const key in storage) {
+                const storedValue = await page.evaluate(() => localStorage.getItem(key))
+                if (storedValue !== storage[key]) {
+                    keySet = false
+                }
+            }
+
+            if (keySet) {
+                await page.close()
+            } else {
+                throw new Error("localStorage keys not set")
+            }
+        }
 
         await fs.mkdir(outDirPath, { recursive: true });
 
