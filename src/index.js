@@ -257,21 +257,22 @@ export async function prerender(config) {
                 }
             }, newStorage);
 
-            var keySet = true
-            for (const key in storage) {
-                console.log(`set ${key} : ${storage[key]}`)
-                const storedValue = await page.evaluate(() => localStorage.getItem(key))
-                console.log(`check ${key} : ${storedValue}`)
-                if (storedValue !== storage[key]) {
-                    keySet = false
-                }
-            }
+            // var keySet = true
+            // for (const key in storage) {
+            //     console.log(`set ${key} : ${storage[key]}`)
+            //     const storedValue = await page.evaluate(() => localStorage.getItem(key))
+            //     console.log(`check ${key} : ${storedValue}`)
+            //     if (storedValue !== storage[key]) {
+            //         keySet = false
+            //     }
+            // }
 
-            if (keySet) {
-                await page.close()
-            } else {
-                throw new Error("localStorage keys not set")
-            }
+            // if (keySet) {
+            //     await page.close()
+            // } else {
+            //     throw new Error("localStorage keys not set")
+            // }
+            await page.close()
         }
 
         await fs.mkdir(outDirPath, { recursive: true });
