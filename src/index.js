@@ -252,15 +252,17 @@ export async function prerender(config) {
             await page.goto(`http://localhost:${port}`)
             await page.evaluate((storage) => {
                 for (const key in storage) {
+                    console.log(`set ${key} : ${storage[key]}`)
                     localStorage.setItem(key, storage[key]);
                 }
             }, newStorage);
 
             var keySet = true
-            for (const key in newStorage) {
+            for (const key in storage) {
+                console.log(`set ${key} : ${storage[key]}`)
                 const storedValue = await page.evaluate(() => localStorage.getItem(key))
                 console.log(`check ${key} : ${storedValue}`)
-                if (storedValue !== newStorage[key]) {
+                if (storedValue !== storage[key]) {
                     keySet = false
                 }
             }
