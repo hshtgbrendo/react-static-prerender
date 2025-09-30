@@ -148,8 +148,8 @@ export async function prerender(config) {
 
         let puppeteerOptions = {
             dumpio: true, // stream chromium logs
-            executablePath: chromiumExecutablePath,
-            // executablePath: "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
+            // executablePath: chromiumExecutablePath,
+            executablePath: "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
             // headless: chromium.headless,
             headless: true,
             // args: ['--no-sandbox', '--disable-dev-shm-usage', "--remote-debugging-pipe"]
