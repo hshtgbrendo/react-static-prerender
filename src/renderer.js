@@ -92,7 +92,7 @@ export class Renderer {
 
         const currentUrl = await page.url()
         if (currentUrl !== requestUrl) {
-            console.log('url mismatch')
+            console.log(`url mismatch. current url: ${currentUrl} - target url: ${requestUrl}`)
             await page.close()
             throw new Error(`url mismatch`);
         }
