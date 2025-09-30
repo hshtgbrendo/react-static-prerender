@@ -90,6 +90,13 @@ export class Renderer {
             console.error(e)
         }
 
+        const currentUrl = await page.url()
+        if (currentUrl !== requestUrl) {
+            console.log('url mismatch')
+            await page.close()
+            throw new Error(`url mismatch`);
+        }
+
         if (!response) {
             console.error("response does not exist")
             // This should only occur when the page is about:blank. See
