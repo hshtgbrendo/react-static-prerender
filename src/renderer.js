@@ -133,7 +133,7 @@ export class Renderer {
         }
 
         // Remove script & import tags.
-        await page.evaluate(stripPage)
+        // await page.evaluate(stripPage)
         // Inject <base> tag with the origin of the request (ie. no path).
         const parsedUrl = url.parse(requestUrl)
         await page.evaluate(
