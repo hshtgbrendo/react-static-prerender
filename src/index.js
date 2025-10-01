@@ -262,19 +262,12 @@ export async function prerender(config) {
             }, setStorage);
 
             var keySet = true
-            console.log("keys: ", keys)
-            if (keys.length > 0) {
-                keys.forEach(async function (key) {
-                    console.log(`key: ${key}`)
-                    const storedValue = await page.evaluate(() => localStorage.getItem(key))
-                    console.log(`check ${key} : ${setStorage[key]} => ${storedValue}`)
-                    if (storedValue !== setStorage[key]) {
-                        keySet = false
-                    }
-                })
-            } else {
-                console.log("no keys")
-            }
+            for (const key in setStorage) {
+                const storedValue = await page.evaluate((key) => localStorage.getItem(key))
+                console.log(`check ${key} : ${setStorage[key]} => ${storedValue}`)
+                if (storedValue !== setStorage[key]) {
+
+                }
 
             if (keySet) {
                 await page.close()
