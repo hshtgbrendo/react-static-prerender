@@ -266,8 +266,9 @@ export async function prerender(config) {
                 const storedValue = await page.evaluate((key) => localStorage.getItem(key))
                 console.log(`check ${key} : ${setStorage[key]} => ${storedValue}`)
                 if (storedValue !== setStorage[key]) {
-
+                    keySet = false
                 }
+            }
 
             if (keySet) {
                 await page.close()
