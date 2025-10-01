@@ -103,7 +103,7 @@ export async function prerender(config) {
         puppeteerExecutablePath = '',
         waitOnSelector = '',
         tag = false,
-        storage = {},
+        setStorage = {},
     } = config;
 
     // var rendertronConfig = await ConfigManager.getConfiguration()
@@ -244,35 +244,37 @@ export async function prerender(config) {
         console.log("📄 created renderer")
         // const page = await browser.newPage();
 
-        const newStorage = storage
-
-        if (newStorage) {
-            console.log("set storage:", newStorage)
+        if (setStorage) {
+            console.log("set storage:", setStorage)
             const page = await browser.newPage()
             await page.goto(`http://localhost:${port}`)
+
+            const currentUrl = await page.url()
+            const cookies = await browser.cookies()
+            console.log(`🍪 cookies for ${currentUrl}:`, cookies)
+
             await page.evaluate((storage) => {
                 for (const key in storage) {
                     console.log(`set ${key} : ${storage[key]}`)
                     localStorage.setItem(key, storage[key]);
                 }
-            }, newStorage);
+            }, setStorage);
 
-            // var keySet = true
-            // for (const key in storage) {
-            //     console.log(`set ${key} : ${storage[key]}`)
-            //     const storedValue = await page.evaluate(() => localStorage.getItem(key))
-            //     console.log(`check ${key} : ${storedValue}`)
-            //     if (storedValue !== storage[key]) {
-            //         keySet = false
-            //     }
-            // }
+            var keySet = true
+            for (const key in setStorage) {
+                const storedValue = await page.evaluate(() => localStorage.getItem(key))
+                console.log(`check ${key} : ${setStorage[key]} => ${storedValue}`)
+                if (storedValue !== setStorage[key]) {
+                    keySet = false
+                }
+            }
 
-            // if (keySet) {
-            //     await page.close()
-            // } else {
-            //     throw new Error("localStorage keys not set")
-            // }
-            await page.close()
+            if (keySet) {
+                await page.close()
+            } else {
+                throw new Error("localStorage keys not set")
+            }
+            // await page.close()
         }
 
         await fs.mkdir(outDirPath, { recursive: true });

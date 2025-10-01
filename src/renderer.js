@@ -91,6 +91,8 @@ export class Renderer {
         }
 
         const currentUrl = await page.url()
+        const cookies = await this.browser.cookies()
+        console.log(`🍪 cookies for ${currentUrl}:`, cookies)
         if (currentUrl !== requestUrl) {
             console.log(`url mismatch. current url: ${currentUrl} - target url: ${requestUrl}`)
             // await page.close()
