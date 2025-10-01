@@ -146,6 +146,8 @@ export async function prerender(config) {
         console.log(`📄 chromium executable path: ${chromiumExecutablePath}`)
         // console.log(`📄 chromium args: ${chromium.args}`)
 
+        const userDataDir = path.join(__dirname, 'my-custom-user-data');
+
         let puppeteerOptions = {
             dumpio: true, // stream chromium logs
             executablePath: chromiumExecutablePath,
@@ -231,6 +233,7 @@ export async function prerender(config) {
             ],
             // defaultViewport: chromium.defaultViewport,
             protocolTimeout: 60000,
+            userDataDir: userDataDir,
         }
         // if (puppeteerExecutablePath) {
         //     puppeteerOptions['executablePath'] = puppeteerExecutablePath
