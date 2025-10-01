@@ -244,7 +244,8 @@ export async function prerender(config) {
         console.log("📄 created renderer")
         // const page = await browser.newPage();
 
-        if (setStorage) {
+        let keys = Object.keys(setStorage)
+        if (keys.length > 0) {
             console.log("set storage:", setStorage)
             const page = await browser.newPage()
             await page.goto(`http://localhost:${port}`)
@@ -261,13 +262,14 @@ export async function prerender(config) {
             }, setStorage);
 
             var keySet = true
-            for (const key in setStorage) {
+            console.log("setstorage: ", setStorage)
+            keys.forEach(async function(key) {
                 const storedValue = await page.evaluate(() => localStorage.getItem(key))
                 console.log(`check ${key} : ${setStorage[key]} => ${storedValue}`)
                 if (storedValue !== setStorage[key]) {
                     keySet = false
                 }
-            }
+            })
 
             if (keySet) {
                 await page.close()
