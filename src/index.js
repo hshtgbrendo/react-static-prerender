@@ -275,28 +275,29 @@ export async function prerender(config) {
             //     }
             // }, setStorage);
 
-            var keySet = true
-            for (const key in setStorage) {
-                const storedValue = await page.evaluate((key) => {
+            await page.evaluate(async (storage) => {
+                var keySet = true
+
+                for (const key in storage) {
+                    let storedValue = null
                     try {
-                        return localStorage.getItem(JSON.stringify(key))
+                        storedValue = localStorage.getItem(JSON.stringify(key))
                     } catch (error) {
                         console.error('Error accessing Local Storage:', error);
-                        return null
                     }
-                })
-                
-                console.log(`check ${key} : ${setStorage[key]} => ${storedValue}`)
-                if (storedValue !== setStorage[key]) {
-                    keySet = false
-                }
-            }
 
-            if (keySet) {
-                await page.close()
-            } else {
-                throw new Error("localStorage keys not set")
-            }
+                    console.log(`check ${key} : ${storage[key]} => ${storedValue}`)
+                    if (storedValue !== storage[key]) {
+                        keySet = false
+                    }
+                }
+
+                if (keySet) {
+                    await page.close()
+                } else {
+                    throw new Error("localStorage keys not set")
+                }
+            }, setStorage)
             // await page.close()
         }
 
