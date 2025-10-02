@@ -257,8 +257,8 @@ export async function prerender(config) {
             await page.evaluateOnNewDocument((storage) => {
                 for (const key in storage) {
                     console.log(`set ${key} : ${storage[key]}`)
-                    localStorage.setItem(key, storage[key]);
-                    console.log(localStorage.getItem(key))
+                    localStorage.setItem(JSON.stringify(key), JSON.stringify(storage[key]));
+                    console.log(localStorage.getItem(JSON.stringify(key)))
                 }
             }, setStorage)
 
@@ -277,7 +277,15 @@ export async function prerender(config) {
 
             var keySet = true
             for (const key in setStorage) {
-                const storedValue = await page.evaluate((key) => localStorage.getItem(key))
+                const storedValue = await page.evaluate((key) => {
+                    try {
+                        return localStorage.getItem(JSON.stringify(key))
+                    } catch (error) {
+                        console.error('Error accessing Local Storage:', error);
+                        return null
+                    }
+                })
+                
                 console.log(`check ${key} : ${setStorage[key]} => ${storedValue}`)
                 if (storedValue !== setStorage[key]) {
                     keySet = false
