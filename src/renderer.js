@@ -8,9 +8,10 @@ const MOBILE_USERAGENT =
  * APIs that are able to handle web components and PWAs.
  */
 export class Renderer {
-    constructor(browser, config) {
+    constructor(browser, config, setStorage) {
         this.browser = browser
         this.config = config
+        this.setStorage = setStorage
     }
 
     async serialize(requestUrl, isMobile) {
@@ -53,6 +54,11 @@ export class Renderer {
         console.log(`📄 create page`)
         const page = await this.browser.newPage()
 
+        await page.setUserAgent(
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 " +
+            "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        );
+
         page.on('console', async msg => {
             const args = msg.args()
             const values = []
@@ -62,6 +68,15 @@ export class Renderer {
 
             console.log(`BROWSER [${msg.type()}]: `, ...values)
         })
+
+        console.log("set storage:", this.setStorage)
+        await page.evaluateOnNewDocument((storage) => {
+            for (const key in storage) {
+                console.log(`set ${key} : ${storage[key]}`)
+                localStorage.setItem(JSON.stringify(key), JSON.stringify(storage[key]));
+                console.log(localStorage.getItem(JSON.stringify(key)))
+            }
+        }, this.setStorage)
 
         // Page may reload when setting isMobile
         // https://github.com/GoogleChrome/puppeteer/blob/v1.10.0/docs/api.md#pagesetviewportviewport

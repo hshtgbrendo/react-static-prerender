@@ -241,7 +241,7 @@ export async function prerender(config) {
 
         browser = await puppeteer.launch(puppeteerOptions);
         console.log("📄 created browser")
-        var renderer = new Renderer(browser, rendertronConfig)
+        var renderer = new Renderer(browser, rendertronConfig, setStorage)
         console.log("📄 created renderer")
         // const page = await browser.newPage();
 
@@ -337,7 +337,7 @@ export async function prerender(config) {
             // const mobileVersion = "mobile" in ctx.query ? true : false
             const mobileVersion = false
             // const html = await page.content();
-            const html = await renderer.serialize(url, mobileVersion)
+            const html = await renderer.serialize(url, mobileVersion, setStorage)
             console.log(`📄 serialized page: ${html.content}`)
 
             if (route === "/") {
