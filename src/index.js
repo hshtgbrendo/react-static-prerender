@@ -287,7 +287,7 @@ export async function prerender(config) {
                     }
 
                     console.log(`check ${key} : ${storage[key]} => ${storedValue}`)
-                    if (storedValue !== storage[key]) {
+                    if (storedValue !== JSON.stringify(storage[key])) {
                         keySet = false
                     }
                 }
