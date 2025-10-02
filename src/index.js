@@ -247,20 +247,33 @@ export async function prerender(config) {
 
         let keys = Object.keys(setStorage)
         if (keys.length > 0) {
-            console.log("set storage:", setStorage)
             const page = await browser.newPage()
+            await page.setUserAgent(
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 " +
+                "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            );
+
+            console.log("set storage:", setStorage)
+            await page.evaluateOnNewDocument((storage) => {
+                for (const key in storage) {
+                    console.log(`set ${key} : ${storage[key]}`)
+                    localStorage.setItem(key, storage[key]);
+                    console.log(localStorage.getItem(key))
+                }
+            }, setStorage)
+
             await page.goto(`http://localhost:${port}`)
 
             const currentUrl = await page.url()
             const cookies = await browser.cookies()
             console.log(`🍪 cookies for ${currentUrl}:`, cookies)
 
-            await page.evaluate((storage) => {
-                for (const key in storage) {
-                    console.log(`set ${key} : ${storage[key]}`)
-                    localStorage.setItem(key, storage[key]);
-                }
-            }, setStorage);
+            // await page.evaluate((storage) => {
+            //     for (const key in storage) {
+            //         console.log(`set ${key} : ${storage[key]}`)
+            //         localStorage.setItem(key, storage[key]);
+            //     }
+            // }, setStorage);
 
             var keySet = true
             for (const key in setStorage) {
