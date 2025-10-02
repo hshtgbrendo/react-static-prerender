@@ -96,7 +96,7 @@ export class Renderer {
             }
 
             return confirmKeys
-        }, setStorage)
+        }, this.setStorage)
 
         if (keySet) {
             console.log("keys set")
@@ -176,7 +176,7 @@ export class Renderer {
             }
 
             return confirmKeys
-        }, setStorage)
+        }, this.setStorage)
 
         if (keySet) {
             console.log("keys set")
