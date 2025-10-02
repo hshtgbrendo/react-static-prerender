@@ -253,6 +253,16 @@ export async function prerender(config) {
                 "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             );
 
+            page.on('console', async msg => {
+                const args = msg.args()
+                const values = []
+                for (let i = 0; i < args.length; i++) {
+                    values.push(await args[i].jsonValue())
+                }
+
+                console.log(`BROWSER [${msg.type()}]: `, ...values)
+            })
+
             console.log("set storage:", setStorage)
             await page.evaluateOnNewDocument((storage) => {
                 for (const key in storage) {

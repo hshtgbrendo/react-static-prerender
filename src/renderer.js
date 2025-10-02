@@ -53,6 +53,16 @@ export class Renderer {
         console.log(`📄 create page`)
         const page = await this.browser.newPage()
 
+        page.on('console', async msg => {
+            const args = msg.args()
+            const values = []
+            for (let i = 0; i < args.length; i++) {
+                values.push(await args[i].jsonValue())
+            }
+
+            console.log(`BROWSER [${msg.type()}]: `, ...values)
+        })
+
         // Page may reload when setting isMobile
         // https://github.com/GoogleChrome/puppeteer/blob/v1.10.0/docs/api.md#pagesetviewportviewport
         // await page.setViewport({
