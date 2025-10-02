@@ -275,8 +275,8 @@ export async function prerender(config) {
             //     }
             // }, setStorage);
 
-            await page.evaluate(async (storage) => {
-                var keySet = true
+            const keySet = await page.evaluate((storage) => {
+                var confirmKeys = true
 
                 for (const key in storage) {
                     let storedValue = null
@@ -288,16 +288,18 @@ export async function prerender(config) {
 
                     console.log(`check ${key} : ${storage[key]} => ${storedValue}`)
                     if (storedValue !== JSON.stringify(storage[key])) {
-                        keySet = false
+                        confirmKeys = false
                     }
                 }
 
-                if (keySet) {
-                    await page.close()
-                } else {
-                    throw new Error("localStorage keys not set")
-                }
+                return confirmKeys
             }, setStorage)
+
+            if (keySet) {
+                await page.close()
+            } else {
+                throw new Error("localStorage keys not set")
+            }
             // await page.close()
         }
 
