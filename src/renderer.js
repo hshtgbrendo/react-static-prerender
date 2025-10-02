@@ -73,10 +73,36 @@ export class Renderer {
         await page.evaluateOnNewDocument((storage) => {
             for (const key in storage) {
                 console.log(`set ${key} : ${storage[key]}`)
-                localStorage.setItem(JSON.stringify(key), JSON.stringify(storage[key]));
+                localStorage.setItem(JSON.stringify(key), storage[key]);
                 console.log(localStorage.getItem(JSON.stringify(key)))
             }
         }, this.setStorage)
+
+        var keySet = await page.evaluate((storage) => {
+            var confirmKeys = true
+
+            for (const key in storage) {
+                let storedValue = null
+                try {
+                    storedValue = localStorage.getItem(JSON.stringify(key))
+                } catch (error) {
+                    console.error('Error accessing Local Storage:', error);
+                }
+
+                console.log(`check ${key} : ${storage[key]} => ${storedValue}`)
+                if (storedValue !== JSON.stringify(storage[key])) {
+                    confirmKeys = false
+                }
+            }
+
+            return confirmKeys
+        }, setStorage)
+
+        if (keySet) {
+            console.log("keys set")
+        } else {
+            console.log("keys not set")
+        }
 
         // Page may reload when setting isMobile
         // https://github.com/GoogleChrome/puppeteer/blob/v1.10.0/docs/api.md#pagesetviewportviewport
@@ -111,6 +137,14 @@ export class Renderer {
                 timeout: this.config.timeout,
                 waitUntil: "networkidle0"
             })
+
+            try {
+                const el = await page.waitForSelector("#pageLoaded", { visible: true, timeout: 120000 })
+                console.log(`#pageLoaded found on page ${requestUrl}`)
+            } catch (err) {
+                console.log(`#pageLoaded not found on page ${requestUrl}`)
+                response = null
+            }
         } catch (e) {
             console.error(e)
         }
@@ -122,6 +156,32 @@ export class Renderer {
             console.log(`url mismatch. current url: ${currentUrl} - target url: ${requestUrl}`)
             // await page.close()
             // throw new Error(`url mismatch`);
+        }
+
+        keySet = await page.evaluate((storage) => {
+            var confirmKeys = true
+
+            for (const key in storage) {
+                let storedValue = null
+                try {
+                    storedValue = localStorage.getItem(JSON.stringify(key))
+                } catch (error) {
+                    console.error('Error accessing Local Storage:', error);
+                }
+
+                console.log(`check ${key} : ${storage[key]} => ${storedValue}`)
+                if (storedValue !== JSON.stringify(storage[key])) {
+                    confirmKeys = false
+                }
+            }
+
+            return confirmKeys
+        }, setStorage)
+
+        if (keySet) {
+            console.log("keys set")
+        } else {
+            console.log("keys not set")
         }
 
         if (!response) {
