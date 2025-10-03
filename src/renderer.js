@@ -113,7 +113,7 @@ export class Renderer {
         if (keysSet) {
             console.log("keys set")
         } else {
-            keysSet.log("keys not set")
+            console.log("keys not set")
         }
 
         // Page may reload when setting isMobile
