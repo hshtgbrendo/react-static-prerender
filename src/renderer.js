@@ -81,7 +81,7 @@ export class Renderer {
             }
         })
 
-        console.log("set storage:", this.setStorage)
+        console.log(`set storage for requested page ${requestUrl}:`, this.setStorage)
         await page.evaluateOnNewDocument((storage) => {
             for (const key in storage) {
                 console.log(`set ${key} : ${storage[key]}`)
@@ -90,7 +90,7 @@ export class Renderer {
             }
         }, this.setStorage)
 
-        var keySet = await page.evaluate((storage) => {
+        var keysSet = await page.evaluate((storage) => {
             var confirmKeys = true
 
             for (const key in storage) {
@@ -110,10 +110,10 @@ export class Renderer {
             return confirmKeys
         }, this.setStorage)
 
-        if (keySet) {
+        if (keysSet) {
             console.log("keys set")
         } else {
-            console.log("keys not set")
+            keysSet.log("keys not set")
         }
 
         // Page may reload when setting isMobile
@@ -170,7 +170,7 @@ export class Renderer {
             // throw new Error(`url mismatch`);
         }
 
-        keySet = await page.evaluate((storage) => {
+        const keySet = await page.evaluate((storage) => {
             var confirmKeys = true
 
             for (const key in storage) {
