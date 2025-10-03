@@ -60,13 +60,25 @@ export class Renderer {
         );
 
         page.on('console', async msg => {
-            const args = msg.args()
-            const values = []
-            for (let i = 0; i < args.length; i++) {
-                values.push(await args[i].jsonValue())
-            }
+            // const args = msg.args()
+            // const values = []
+            // for (let i = 0; i < args.length; i++) {
+            //     values.push(await args[i].jsonValue())
+            // }
 
-            console.log(`BROWSER [${msg.type()}]: `, ...values)
+            // console.log(`BROWSER [${msg.type()}]: `, ...values)
+            try {
+                // Get all args passed into console.log
+                const args = await Promise.all(msg.args().map(arg => arg.jsonValue()));
+
+                // Format them similar to how they'd appear in the browser
+                console.log(
+                    `BROWSER [${msg.type()}]`,
+                    ...args.map(a => (typeof a === "object" ? JSON.stringify(a) : a))
+                );
+            } catch (err) {
+                console.error("Error parsing console message:", err);
+            }
         })
 
         console.log("set storage:", this.setStorage)
